@@ -1,6 +1,7 @@
 ﻿using BakeryConsoleApp.Services;
 
 var clientService = new ClientService();
+
 while (true)
 {
     Console.WriteLine();
@@ -12,45 +13,58 @@ while (true)
 
     var choice = Console.ReadLine();
 
-    if (choice == "1")
-{
-    Console.Write("Enter client name: ");
-    var name = Console.ReadLine();
-
-    Console.Write("Enter phone number: ");
-    var phone = Console.ReadLine();
-
-    try
-{
-    var client = clientService.AddClient(name!, phone!);
-    Console.WriteLine($"Client added with ID: {client.Id}");
-}
-catch (ArgumentException ex)
-{
-    Console.WriteLine($"Error: {ex.Message}");
-}
-    
-}
-
-if (choice == "2")
-{
-    var clients = clientService.GetAllClients();
-
-    if (clients.Count == 0)
-    {
-        Console.WriteLine("No clients found.");
-        continue;
-    }
-
-    foreach (var client in clients)
-    {
-        Console.WriteLine($"{client.Id}: {client.Name} ({client.PhoneNumber})");
-    }
-}
-
     if (choice == "0")
     {
         break;
     }
+
+    if (choice == "1")
+    {
+        bool clientAdded = false;
+
+        while (!clientAdded)
+        {
+            Console.Write("Enter client name: ");
+            var name = Console.ReadLine();
+
+            Console.Write("Enter phone number: ");
+            var phone = Console.ReadLine();
+
+            try
+            {
+                var client = clientService.AddClient(name!, phone!);
+                Console.WriteLine($"Client added with ID: {client.Id}");
+                clientAdded = true;
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine("Please try again.\n");
+            }
+        }
+
+        continue;
+    }
+
+    if (choice == "2")
+    {
+        var clients = clientService.GetAllClients();
+
+        if (clients.Count == 0)
+        {
+            Console.WriteLine("No clients found.");
+            continue;
+        }
+
+        foreach (var client in clients)
+        {
+            Console.WriteLine($"{client.Id}: {client.Name} ({client.PhoneNumber})");
+        }
+
+        continue;
+    }
+
+    Console.WriteLine("Unknown option. Please try again.");
 }
+
 
