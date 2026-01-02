@@ -20,9 +20,16 @@ while (true)
     Console.Write("Enter phone number: ");
     var phone = Console.ReadLine();
 
+    try
+{
     var client = clientService.AddClient(name!, phone!);
-
     Console.WriteLine($"Client added with ID: {client.Id}");
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine($"Error: {ex.Message}");
+}
+    
 }
 
 if (choice == "2")
@@ -46,3 +53,4 @@ if (choice == "2")
         break;
     }
 }
+
