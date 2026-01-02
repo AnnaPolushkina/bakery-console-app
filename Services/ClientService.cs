@@ -1,11 +1,37 @@
 using BakeryConsoleApp.Models;
+using System.Text.Json;
+
 
 namespace BakeryConsoleApp.Services;
 
 public class ClientService
 {
+    private const string FilePath = "clients.json";
     private readonly List<Client> _clients = new();
     private int _nextId = 1;
+    public ClientService()
+{
+    LoadFromFile();
+}
+
+private void LoadFromFile()
+{
+    if (!File.Exists(FilePath))
+        return;
+
+    var json = File.ReadAllText(FilePath);
+    var loadedClients = JsonSerializer.Deserialize<List<Client>>(json);
+
+    if (loadedClients is null)
+        return;
+
+    _clients.AddRange(loadedClients);
+
+    if (_clients.Count > 0)
+    {
+        _nextId = _clients.Max(c => c.Id) + 1;
+    }
+}
 
     public Client AddClient(string name, string phoneNumber)
 {
@@ -31,8 +57,21 @@ public class ClientService
     };
 
     _clients.Add(client);
+    SaveToFile();
     return client;
+
 }
+
+private void SaveToFile()
+{
+    var json = JsonSerializer.Serialize(_clients, new JsonSerializerOptions
+    {
+        WriteIndented = true
+    });
+
+    File.WriteAllText(FilePath, json);
+}
+
 
 private bool IsValidName(string name)
 {
